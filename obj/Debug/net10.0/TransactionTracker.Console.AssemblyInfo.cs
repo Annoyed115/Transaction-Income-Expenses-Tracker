@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TransactionTracker.Console")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c2e7ce53d3ec634c9879fa5d35bef062ea11335b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5f8fae469074a0723b0a80f0cc3baa79d10cbd4e")]
 [assembly: System.Reflection.AssemblyProductAttribute("TransactionTracker.Console")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TransactionTracker.Console")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

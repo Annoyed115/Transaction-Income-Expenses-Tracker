@@ -1,15 +1,4 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-const string DataFilePath = "transactions.json";
-
-JsonSerializerOptions jsonOptions = new()
-{
-    WriteIndented = true
-};
-jsonOptions.Converters.Add(new JsonStringEnumConverter());
-
-List<Transaction> transactions = LoadTransactions();
+List<Transaction> transactions = TransactionStorage.Load();
 
 while (true)
 {
@@ -101,7 +90,7 @@ void AddTransaction(TransactionType type)
         date);
 
     transactions.Add(transaction);
-    SaveTransactions();
+    TransactionStorage.Save(transactions);
     Pause("Transaction added.");
 }
 
@@ -244,7 +233,7 @@ void DeleteTransaction()
     }
 
     transactions.Remove(transactionToDelete);
-    SaveTransactions();
+    TransactionStorage.Save(transactions);
     Pause("Transaction deleted.");
 }
 
@@ -330,13 +319,13 @@ void EditTransaction()
     };
 
     transactions[transactionIndex] = updatedTransaction;
-    SaveTransactions();
+    TransactionStorage.Save(transactions);
     Pause("Transaction updated.");
 }
 
 void PrintTransactions(List<Transaction> transactionsToPrint)
 {
-    foreach (Transaction transaction in transactionsToPrint)
+    foreach (Transaction transaction in transactionsToPrint.OrderByDescending(transaction => transaction.Date))
     {
         string sign = transaction.Type == TransactionType.Income ? "+" : "-";
         Console.WriteLine(
@@ -365,29 +354,6 @@ int GetNextTransactionId()
     }
 
     return transactions.Max(transaction => transaction.Id) + 1;
-}
-
-List<Transaction> LoadTransactions()
-{
-    if (!File.Exists(DataFilePath))
-    {
-        return [];
-    }
-
-    string json = File.ReadAllText(DataFilePath);
-
-    if (string.IsNullOrWhiteSpace(json))
-    {
-        return [];
-    }
-
-    return JsonSerializer.Deserialize<List<Transaction>>(json, jsonOptions) ?? [];
-}
-
-void SaveTransactions()
-{
-    string json = JsonSerializer.Serialize(transactions, jsonOptions);
-    File.WriteAllText(DataFilePath, json);
 }
 
 bool TryReadYearAndMonth(out int year, out int month)
