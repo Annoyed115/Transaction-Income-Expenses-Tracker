@@ -1,4 +1,15 @@
-List<Transaction> transactions = [];
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+const string DataFilePath = "transactions.json";
+
+JsonSerializerOptions jsonOptions = new()
+{
+    WriteIndented = true
+};
+jsonOptions.Converters.Add(new JsonStringEnumConverter());
+
+List<Transaction> transactions = LoadTransactions();
 
 while (true)
 {
@@ -62,6 +73,8 @@ void AddTransaction(TransactionType type)
 
     TransactionCategory category = ReadCategory();
 
+    DateTime date = ReadDate();
+
     Console.Write("Amount: ");
     string? amountText = Console.ReadLine();
 
@@ -72,14 +85,15 @@ void AddTransaction(TransactionType type)
     }
 
     Transaction transaction = new(
-        transactions.Count + 1,
+        GetNextTransactionId(),
         description,
         category,
         amount,
         type,
-        DateTime.Today);
+        date);
 
     transactions.Add(transaction);
+    SaveTransactions();
     Pause("Transaction added.");
 }
 
@@ -102,20 +116,14 @@ void ListTransactions()
 
 void ShowBalance()
 {
-    decimal income = transactions
-        .Where(transaction => transaction.Type == TransactionType.Income)
-        .Sum(transaction => transaction.Amount);
-
-    decimal expenses = transactions
-        .Where(transaction => transaction.Type == TransactionType.Expense)
-        .Sum(transaction => transaction.Amount);
+    (decimal income, decimal expenses, decimal total) = CalculateBalance(transactions);
 
     ClearScreen();
     Console.WriteLine("Balance");
     Console.WriteLine();
     Console.WriteLine($"Income:   {income:C}");
     Console.WriteLine($"Expenses: {expenses:C}");
-    Console.WriteLine($"Total:    {income - expenses:C}");
+    Console.WriteLine($"Total:    {total:C}");
 
     Pause();
 }
@@ -123,21 +131,8 @@ void ShowBalance()
 void ShowMonthlyBalance()
 {
     ClearScreen();
-    Console.Write("Year: ");
-    string? yearText = Console.ReadLine();
-
-    Console.Write("Month (1-12): ");
-    string? monthText = Console.ReadLine();
-
-    if (!int.TryParse(yearText, out int year) || year < 1)
+    if (!TryReadYearAndMonth(out int year, out int month))
     {
-        Pause("Year must be a valid number.");
-        return;
-    }
-
-    if (!int.TryParse(monthText, out int month) || month < 1 || month > 12)
-    {
-        Pause("Month must be between 1 and 12.");
         return;
     }
 
@@ -145,20 +140,14 @@ void ShowMonthlyBalance()
         .Where(transaction => transaction.Date.Year == year && transaction.Date.Month == month)
         .ToList();
 
-    decimal income = monthlyTransactions
-        .Where(transaction => transaction.Type == TransactionType.Income)
-        .Sum(transaction => transaction.Amount);
-
-    decimal expenses = monthlyTransactions
-        .Where(transaction => transaction.Type == TransactionType.Expense)
-        .Sum(transaction => transaction.Amount);
+    (decimal income, decimal expenses, decimal total) = CalculateBalance(monthlyTransactions);
 
     ClearScreen();
     Console.WriteLine($"Balance for {year}-{month:00}");
     Console.WriteLine();
     Console.WriteLine($"Income:   {income:C}");
     Console.WriteLine($"Expenses: {expenses:C}");
-    Console.WriteLine($"Total:    {income - expenses:C}");
+    Console.WriteLine($"Total:    {total:C}");
 
     Pause();
 }
@@ -190,21 +179,8 @@ void FilterByCategory()
 void FilterByMonth()
 {
     ClearScreen();
-    Console.Write("Year: ");
-    string? yearText = Console.ReadLine();
-
-    Console.Write("Month (1-12): ");
-    string? monthText = Console.ReadLine();
-
-    if (!int.TryParse(yearText, out int year) || year < 1)
+    if (!TryReadYearAndMonth(out int year, out int month))
     {
-        Pause("Year must be a valid number.");
-        return;
-    }
-
-    if (!int.TryParse(monthText, out int month) || month < 1 || month > 12)
-    {
-        Pause("Month must be between 1 and 12.");
         return;
     }
 
@@ -237,6 +213,76 @@ void PrintTransactions(List<Transaction> transactionsToPrint)
     }
 }
 
+(decimal Income, decimal Expenses, decimal Total) CalculateBalance(List<Transaction> transactionsToCalculate)
+{
+    decimal income = transactionsToCalculate
+        .Where(transaction => transaction.Type == TransactionType.Income)
+        .Sum(transaction => transaction.Amount);
+
+    decimal expenses = transactionsToCalculate
+        .Where(transaction => transaction.Type == TransactionType.Expense)
+        .Sum(transaction => transaction.Amount);
+
+    return (income, expenses, income - expenses);
+}
+
+int GetNextTransactionId()
+{
+    if (transactions.Count == 0)
+    {
+        return 1;
+    }
+
+    return transactions.Max(transaction => transaction.Id) + 1;
+}
+
+List<Transaction> LoadTransactions()
+{
+    if (!File.Exists(DataFilePath))
+    {
+        return [];
+    }
+
+    string json = File.ReadAllText(DataFilePath);
+
+    if (string.IsNullOrWhiteSpace(json))
+    {
+        return [];
+    }
+
+    return JsonSerializer.Deserialize<List<Transaction>>(json, jsonOptions) ?? [];
+}
+
+void SaveTransactions()
+{
+    string json = JsonSerializer.Serialize(transactions, jsonOptions);
+    File.WriteAllText(DataFilePath, json);
+}
+
+bool TryReadYearAndMonth(out int year, out int month)
+{
+    Console.Write("Year: ");
+    string? yearText = Console.ReadLine();
+
+    Console.Write("Month (1-12): ");
+    string? monthText = Console.ReadLine();
+
+    if (!int.TryParse(yearText, out year) || year < 1)
+    {
+        month = 0;
+        Pause("Year must be a valid number.");
+        return false;
+    }
+
+    if (!int.TryParse(monthText, out month) || month < 1 || month > 12)
+    {
+        Pause("Month must be between 1 and 12.");
+        return false;
+    }
+
+    return true;
+}
+
 TransactionCategory ReadCategory()
 {
     Console.WriteLine("Category:");
@@ -263,6 +309,24 @@ TransactionCategory ReadCategory()
     };
 }
 
+DateTime ReadDate()
+{
+    Console.Write("Date (yyyy-mm-dd, empty for today): ");
+    string? dateText = Console.ReadLine();
+
+    if (string.IsNullOrWhiteSpace(dateText))
+    {
+        return DateTime.Today;
+    }
+
+    if (DateTime.TryParse(dateText, out DateTime date))
+    {
+        return date;
+    }
+
+    Pause("Invalid date. Today's date will be used.");
+    return DateTime.Today;
+}
 
 void Pause(string? message = null)
 {
