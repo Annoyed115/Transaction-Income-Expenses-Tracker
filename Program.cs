@@ -11,6 +11,7 @@ while (true)
     Console.WriteLine("4. Show balance");
     Console.WriteLine("5. Filter by category");
     Console.WriteLine("6. Filter by month");
+    Console.WriteLine("7. Show monthly balance");
     Console.WriteLine("0. Exit");
     Console.WriteLine();
     Console.Write("Choose an option: ");
@@ -36,6 +37,9 @@ while (true)
             break;
         case "6":
             FilterByMonth();
+            break;
+        case "7":
+            ShowMonthlyBalance();
             break;
         case "0":
             return;
@@ -91,12 +95,7 @@ void ListTransactions()
         return;
     }
 
-    foreach (Transaction transaction in transactions)
-    {
-        string sign = transaction.Type == TransactionType.Income ? "+" : "-";
-        Console.WriteLine(
-            $"{transaction.Id}. {transaction.Date:yyyy-MM-dd} | {transaction.Category} | {transaction.Description} | {sign}{transaction.Amount:C}");
-    }
+    PrintTransactions(transactions);
 
     Pause();
 }
@@ -113,6 +112,49 @@ void ShowBalance()
 
     ClearScreen();
     Console.WriteLine("Balance");
+    Console.WriteLine();
+    Console.WriteLine($"Income:   {income:C}");
+    Console.WriteLine($"Expenses: {expenses:C}");
+    Console.WriteLine($"Total:    {income - expenses:C}");
+
+    Pause();
+}
+
+void ShowMonthlyBalance()
+{
+    ClearScreen();
+    Console.Write("Year: ");
+    string? yearText = Console.ReadLine();
+
+    Console.Write("Month (1-12): ");
+    string? monthText = Console.ReadLine();
+
+    if (!int.TryParse(yearText, out int year) || year < 1)
+    {
+        Pause("Year must be a valid number.");
+        return;
+    }
+
+    if (!int.TryParse(monthText, out int month) || month < 1 || month > 12)
+    {
+        Pause("Month must be between 1 and 12.");
+        return;
+    }
+
+    List<Transaction> monthlyTransactions = transactions
+        .Where(transaction => transaction.Date.Year == year && transaction.Date.Month == month)
+        .ToList();
+
+    decimal income = monthlyTransactions
+        .Where(transaction => transaction.Type == TransactionType.Income)
+        .Sum(transaction => transaction.Amount);
+
+    decimal expenses = monthlyTransactions
+        .Where(transaction => transaction.Type == TransactionType.Expense)
+        .Sum(transaction => transaction.Amount);
+
+    ClearScreen();
+    Console.WriteLine($"Balance for {year}-{month:00}");
     Console.WriteLine();
     Console.WriteLine($"Income:   {income:C}");
     Console.WriteLine($"Expenses: {expenses:C}");
@@ -140,12 +182,7 @@ void FilterByCategory()
         return;
     }
 
-    foreach (Transaction transaction in filteredTransactions)
-    {
-        string sign = transaction.Type == TransactionType.Income ? "+" : "-";
-        Console.WriteLine(
-            $"{transaction.Id}. {transaction.Date:yyyy-MM-dd} | {transaction.Category} | {transaction.Description} | {sign}{transaction.Amount:C}");
-    }
+    PrintTransactions(filteredTransactions);
 
     Pause();
 }
@@ -185,14 +222,19 @@ void FilterByMonth()
         return;
     }
 
-    foreach (Transaction transaction in filteredTransactions)
+    PrintTransactions(filteredTransactions);
+
+    Pause();
+}
+
+void PrintTransactions(List<Transaction> transactionsToPrint)
+{
+    foreach (Transaction transaction in transactionsToPrint)
     {
         string sign = transaction.Type == TransactionType.Income ? "+" : "-";
         Console.WriteLine(
             $"{transaction.Id}. {transaction.Date:yyyy-MM-dd} | {transaction.Category} | {transaction.Description} | {sign}{transaction.Amount:C}");
     }
-
-    Pause();
 }
 
 TransactionCategory ReadCategory()
