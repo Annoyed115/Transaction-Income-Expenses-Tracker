@@ -23,6 +23,7 @@ while (true)
     Console.WriteLine("5. Filter by category");
     Console.WriteLine("6. Filter by month");
     Console.WriteLine("7. Show monthly balance");
+    Console.WriteLine("8. Delete transaction");
     Console.WriteLine("0. Exit");
     Console.WriteLine();
     Console.Write("Choose an option: ");
@@ -52,6 +53,9 @@ while (true)
         case "7":
             ShowMonthlyBalance();
             break;
+        case "8":
+            DeleteTransaction();
+            break;
         case "0":
             return;
         default:
@@ -73,7 +77,7 @@ void AddTransaction(TransactionType type)
 
     TransactionCategory category = ReadCategory();
 
-    DateTime date = ReadDate();
+    DateTime date = DateTime.Today;
 
     Console.Write("Amount: ");
     string? amountText = Console.ReadLine();
@@ -203,6 +207,32 @@ void FilterByMonth()
     Pause();
 }
 
+void DeleteTransaction()
+{
+    ClearScreen();
+    Console.Write("Transaction Id: ");
+    string? idText = Console.ReadLine();
+
+    if (!int.TryParse(idText, out int id))
+    {
+        Pause("Id must be a valid number.");
+        return;
+    }
+
+    Transaction? transactionToDelete = transactions
+        .FirstOrDefault(transaction => transaction.Id == id);
+
+    if (transactionToDelete is null)
+    {
+        Pause("Transaction not found.");
+        return;
+    }
+
+    transactions.Remove(transactionToDelete);
+    SaveTransactions();
+    Pause("Transaction deleted.");
+}
+
 void PrintTransactions(List<Transaction> transactionsToPrint)
 {
     foreach (Transaction transaction in transactionsToPrint)
@@ -307,25 +337,6 @@ TransactionCategory ReadCategory()
         "6" => TransactionCategory.Health,
         _ => TransactionCategory.Other
     };
-}
-
-DateTime ReadDate()
-{
-    Console.Write("Date (yyyy-mm-dd, empty for today): ");
-    string? dateText = Console.ReadLine();
-
-    if (string.IsNullOrWhiteSpace(dateText))
-    {
-        return DateTime.Today;
-    }
-
-    if (DateTime.TryParse(dateText, out DateTime date))
-    {
-        return date;
-    }
-
-    Pause("Invalid date. Today's date will be used.");
-    return DateTime.Today;
 }
 
 void Pause(string? message = null)

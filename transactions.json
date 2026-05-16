@@ -1,0 +1,10 @@
+[
+  {
+    "Id": 1,
+    "Description": "Nomina",
+    "Category": "Salary",
+    "Amount": 2500000,
+    "Type": "Income",
+    "Date": "2026-05-15T00:00:00"
+  }
+]
