@@ -9,9 +9,9 @@
   },
   {
     "Id": 2,
-    "Description": "mercao",
+    "Description": "Mercao",
     "Category": "Food",
-    "Amount": 350000,
+    "Amount": 360000,
     "Type": "Expense",
     "Date": "2026-05-15T00:00:00-05:00"
   }

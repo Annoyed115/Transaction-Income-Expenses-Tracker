@@ -289,6 +289,12 @@ void EditTransaction()
     Console.Write($"Amount ({currentTransaction.Amount}): ");
     string? amountText = Console.ReadLine();
 
+    Console.Write($"Change category ({currentTransaction.Category})? (y/n): ");
+    string? changeCategoryText = Console.ReadLine();
+
+    Console.Write($"Change type ({currentTransaction.Type})? (y/n): ");
+    string? changeTypeText = Console.ReadLine();
+
     string description = string.IsNullOrWhiteSpace(descriptionText)
         ? currentTransaction.Description
         : descriptionText;
@@ -301,10 +307,26 @@ void EditTransaction()
         return;
     }
 
+    TransactionCategory category = currentTransaction.Category;
+    if (changeCategoryText?.Trim().ToLower() == "y")
+    {
+        category = ReadCategory();
+    }
+
+    TransactionType type = currentTransaction.Type;
+    if (changeTypeText?.Trim().ToLower() == "y")
+    {
+        type = currentTransaction.Type == TransactionType.Income
+            ? TransactionType.Expense
+            : TransactionType.Income;
+    }
+
     Transaction updatedTransaction = currentTransaction with
     {
         Description = description,
-        Amount = amount
+        Category = category,
+        Amount = amount,
+        Type = type,
     };
 
     transactions[transactionIndex] = updatedTransaction;
