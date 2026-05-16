@@ -210,6 +210,17 @@ void FilterByMonth()
 void DeleteTransaction()
 {
     ClearScreen();
+    Console.WriteLine("Delete transaction");
+    Console.WriteLine();
+
+    if (transactions.Count == 0)
+    {
+        Pause("No transactions yet.");
+        return;
+    }
+
+    PrintTransactions(transactions);
+    Console.WriteLine();
     Console.Write("Transaction Id: ");
     string? idText = Console.ReadLine();
 

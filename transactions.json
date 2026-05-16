@@ -6,5 +6,13 @@
     "Amount": 2500000,
     "Type": "Income",
     "Date": "2026-05-15T00:00:00"
+  },
+  {
+    "Id": 2,
+    "Description": "mercao",
+    "Category": "Food",
+    "Amount": 350000,
+    "Type": "Expense",
+    "Date": "2026-05-15T00:00:00-05:00"
   }
 ]
