@@ -217,8 +217,7 @@ void DeleteTransaction()
         return;
     }
 
-    Transaction? transactionToDelete = transactions
-        .FirstOrDefault(transaction => transaction.Id == id);
+    Transaction? transactionToDelete = TransactionService.FindById(transactions, id);
 
     if (transactionToDelete is null)
     {
@@ -254,7 +253,7 @@ void EditTransaction()
         return;
     }
 
-    int transactionIndex = transactions.FindIndex(transaction => transaction.Id == id);
+    int transactionIndex = TransactionService.FindIndexById(transactions, id);
 
     if (transactionIndex == -1)
     {

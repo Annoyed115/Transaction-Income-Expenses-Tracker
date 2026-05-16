@@ -36,4 +36,14 @@ static class TransactionService
             .Where(transaction => transaction.Date.Year == year && transaction.Date.Month == month)
             .ToList();
     }
+
+    public static Transaction? FindById(List<Transaction> transactions, int id)
+    {
+        return transactions.FirstOrDefault(transaction => transaction.Id == id);
+    }
+
+    public static int FindIndexById(List<Transaction> transactions, int id)
+    {
+        return transactions.FindIndex(transaction => transaction.Id == id);
+    }
 }
