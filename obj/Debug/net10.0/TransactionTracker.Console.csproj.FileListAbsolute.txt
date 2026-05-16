@@ -1,0 +1,15 @@
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\bin\Debug\net10.0\TransactionTracker.Console.exe
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\bin\Debug\net10.0\TransactionTracker.Console.deps.json
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\bin\Debug\net10.0\TransactionTracker.Console.runtimeconfig.json
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\bin\Debug\net10.0\TransactionTracker.Console.dll
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\bin\Debug\net10.0\TransactionTracker.Console.pdb
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\obj\Debug\net10.0\TransactionTracker.Console.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\obj\Debug\net10.0\TransactionTracker.Console.AssemblyInfoInputs.cache
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\obj\Debug\net10.0\TransactionTracker.Console.AssemblyInfo.cs
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\obj\Debug\net10.0\TransactionTracker.Console.csproj.CoreCompileInputs.cache
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\obj\Debug\net10.0\TransactionTracker.Console.sourcelink.json
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\obj\Debug\net10.0\TransactionTracker.Console.dll
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\obj\Debug\net10.0\refint\TransactionTracker.Console.dll
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\obj\Debug\net10.0\TransactionTracker.Console.pdb
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\obj\Debug\net10.0\TransactionTracker.Console.genruntimeconfig.cache
+C:\Users\PC\Desktop\Multi-Vendor E-Commerce Marketplace\TransactionTracker.Console\obj\Debug\net10.0\ref\TransactionTracker.Console.dll
