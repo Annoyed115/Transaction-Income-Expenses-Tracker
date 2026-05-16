@@ -24,6 +24,7 @@ while (true)
     Console.WriteLine("6. Filter by month");
     Console.WriteLine("7. Show monthly balance");
     Console.WriteLine("8. Delete transaction");
+    Console.WriteLine("9. Edit transaction");
     Console.WriteLine("0. Exit");
     Console.WriteLine();
     Console.Write("Choose an option: ");
@@ -55,6 +56,9 @@ while (true)
             break;
         case "8":
             DeleteTransaction();
+            break;
+        case "9":
+            EditTransaction();
             break;
         case "0":
             return;
@@ -242,6 +246,70 @@ void DeleteTransaction()
     transactions.Remove(transactionToDelete);
     SaveTransactions();
     Pause("Transaction deleted.");
+}
+
+void EditTransaction()
+{
+    ClearScreen();
+    Console.WriteLine("Edit transaction");
+    Console.WriteLine();
+
+    if (transactions.Count == 0)
+    {
+        Pause("No transactions yet.");
+        return;
+    }
+
+    PrintTransactions(transactions);
+    Console.WriteLine();
+    Console.Write("Transaction Id: ");
+    string? idText = Console.ReadLine();
+
+    if (!int.TryParse(idText, out int id))
+    {
+        Pause("Id must be a valid number.");
+        return;
+    }
+
+    int transactionIndex = transactions.FindIndex(transaction => transaction.Id == id);
+
+    if (transactionIndex == -1)
+    {
+        Pause("Transaction not found.");
+        return;
+    }
+
+    Transaction currentTransaction = transactions[transactionIndex];
+
+    Console.WriteLine();
+    Console.WriteLine("Press Enter to keep the current value.");
+    Console.Write($"Description ({currentTransaction.Description}): ");
+    string? descriptionText = Console.ReadLine();
+
+    Console.Write($"Amount ({currentTransaction.Amount}): ");
+    string? amountText = Console.ReadLine();
+
+    string description = string.IsNullOrWhiteSpace(descriptionText)
+        ? currentTransaction.Description
+        : descriptionText;
+
+    decimal amount = currentTransaction.Amount;
+    if (!string.IsNullOrWhiteSpace(amountText)
+        && (!decimal.TryParse(amountText, out amount) || amount <= 0))
+    {
+        Pause("Amount must be a positive number.");
+        return;
+    }
+
+    Transaction updatedTransaction = currentTransaction with
+    {
+        Description = description,
+        Amount = amount
+    };
+
+    transactions[transactionIndex] = updatedTransaction;
+    SaveTransactions();
+    Pause("Transaction updated.");
 }
 
 void PrintTransactions(List<Transaction> transactionsToPrint)
