@@ -82,7 +82,7 @@ void AddTransaction(TransactionType type)
     }
 
     Transaction transaction = new(
-        GetNextTransactionId(),
+        TransactionService.GetNextTransactionId(transactions),
         description,
         category,
         amount,
@@ -113,7 +113,7 @@ void ListTransactions()
 
 void ShowBalance()
 {
-    (decimal income, decimal expenses, decimal total) = CalculateBalance(transactions);
+    (decimal income, decimal expenses, decimal total) = TransactionService.CalculateBalance(transactions);
 
     ClearScreen();
     Console.WriteLine("Balance");
@@ -137,7 +137,7 @@ void ShowMonthlyBalance()
         .Where(transaction => transaction.Date.Year == year && transaction.Date.Month == month)
         .ToList();
 
-    (decimal income, decimal expenses, decimal total) = CalculateBalance(monthlyTransactions);
+    (decimal income, decimal expenses, decimal total) = TransactionService.CalculateBalance(monthlyTransactions);
 
     ClearScreen();
     Console.WriteLine($"Balance for {year}-{month:00}");
@@ -331,29 +331,6 @@ void PrintTransactions(List<Transaction> transactionsToPrint)
         Console.WriteLine(
             $"{transaction.Id}. {transaction.Date:yyyy-MM-dd} | {transaction.Category} | {transaction.Description} | {sign}{transaction.Amount:C}");
     }
-}
-
-(decimal Income, decimal Expenses, decimal Total) CalculateBalance(List<Transaction> transactionsToCalculate)
-{
-    decimal income = transactionsToCalculate
-        .Where(transaction => transaction.Type == TransactionType.Income)
-        .Sum(transaction => transaction.Amount);
-
-    decimal expenses = transactionsToCalculate
-        .Where(transaction => transaction.Type == TransactionType.Expense)
-        .Sum(transaction => transaction.Amount);
-
-    return (income, expenses, income - expenses);
-}
-
-int GetNextTransactionId()
-{
-    if (transactions.Count == 0)
-    {
-        return 1;
-    }
-
-    return transactions.Max(transaction => transaction.Id) + 1;
 }
 
 bool TryReadYearAndMonth(out int year, out int month)
