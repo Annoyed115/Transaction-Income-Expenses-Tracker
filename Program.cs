@@ -133,9 +133,7 @@ void ShowMonthlyBalance()
         return;
     }
 
-    List<Transaction> monthlyTransactions = transactions
-        .Where(transaction => transaction.Date.Year == year && transaction.Date.Month == month)
-        .ToList();
+    List<Transaction> monthlyTransactions = TransactionService.GetByMonth(transactions, year, month);
 
     (decimal income, decimal expenses, decimal total) = TransactionService.CalculateBalance(monthlyTransactions);
 
@@ -154,9 +152,7 @@ void FilterByCategory()
     ClearScreen();
     TransactionCategory category = ReadCategory();
 
-    List<Transaction> filteredTransactions = transactions
-        .Where(transaction => transaction.Category == category)
-        .ToList();
+    List<Transaction> filteredTransactions = TransactionService.GetByCategory(transactions, category);
 
     ClearScreen();
     Console.WriteLine($"Transactions in {category}");
@@ -181,9 +177,7 @@ void FilterByMonth()
         return;
     }
 
-    List<Transaction> filteredTransactions = transactions
-        .Where(transaction => transaction.Date.Year == year && transaction.Date.Month == month)
-        .ToList();
+    List<Transaction> filteredTransactions = TransactionService.GetByMonth(transactions, year, month);
 
     ClearScreen();
     Console.WriteLine($"Transactions for {year}-{month:00}");

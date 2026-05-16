@@ -22,4 +22,18 @@ static class TransactionService
 
         return transactions.Max(transaction => transaction.Id) + 1;
     }
+
+    public static List<Transaction> GetByCategory(List<Transaction> transactions, TransactionCategory category)
+    {
+        return transactions
+            .Where(transaction => transaction.Category == category)
+            .ToList();
+    }
+
+    public static List<Transaction> GetByMonth(List<Transaction> transactions, int year, int month)
+    {
+        return transactions
+            .Where(transaction => transaction.Date.Year == year && transaction.Date.Month == month)
+            .ToList();
+    }
 }
