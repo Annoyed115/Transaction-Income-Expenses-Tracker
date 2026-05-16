@@ -9,6 +9,8 @@ while (true)
     Console.WriteLine("2. Add expense");
     Console.WriteLine("3. List transactions");
     Console.WriteLine("4. Show balance");
+    Console.WriteLine("5. Filter by category");
+    Console.WriteLine("6. Filter by month");
     Console.WriteLine("0. Exit");
     Console.WriteLine();
     Console.Write("Choose an option: ");
@@ -28,6 +30,12 @@ while (true)
             break;
         case "4":
             ShowBalance();
+            break;
+        case "5":
+            FilterByCategory();
+            break;
+        case "6":
+            FilterByMonth();
             break;
         case "0":
             return;
@@ -109,6 +117,80 @@ void ShowBalance()
     Console.WriteLine($"Income:   {income:C}");
     Console.WriteLine($"Expenses: {expenses:C}");
     Console.WriteLine($"Total:    {income - expenses:C}");
+
+    Pause();
+}
+
+void FilterByCategory()
+{
+    ClearScreen();
+    TransactionCategory category = ReadCategory();
+
+    List<Transaction> filteredTransactions = transactions
+        .Where(transaction => transaction.Category == category)
+        .ToList();
+
+    ClearScreen();
+    Console.WriteLine($"Transactions in {category}");
+    Console.WriteLine();
+
+    if (filteredTransactions.Count == 0)
+    {
+        Pause("No transactions found for this category.");
+        return;
+    }
+
+    foreach (Transaction transaction in filteredTransactions)
+    {
+        string sign = transaction.Type == TransactionType.Income ? "+" : "-";
+        Console.WriteLine(
+            $"{transaction.Id}. {transaction.Date:yyyy-MM-dd} | {transaction.Category} | {transaction.Description} | {sign}{transaction.Amount:C}");
+    }
+
+    Pause();
+}
+
+void FilterByMonth()
+{
+    ClearScreen();
+    Console.Write("Year: ");
+    string? yearText = Console.ReadLine();
+
+    Console.Write("Month (1-12): ");
+    string? monthText = Console.ReadLine();
+
+    if (!int.TryParse(yearText, out int year) || year < 1)
+    {
+        Pause("Year must be a valid number.");
+        return;
+    }
+
+    if (!int.TryParse(monthText, out int month) || month < 1 || month > 12)
+    {
+        Pause("Month must be between 1 and 12.");
+        return;
+    }
+
+    List<Transaction> filteredTransactions = transactions
+        .Where(transaction => transaction.Date.Year == year && transaction.Date.Month == month)
+        .ToList();
+
+    ClearScreen();
+    Console.WriteLine($"Transactions for {year}-{month:00}");
+    Console.WriteLine();
+
+    if (filteredTransactions.Count == 0)
+    {
+        Pause("No transactions found for this month.");
+        return;
+    }
+
+    foreach (Transaction transaction in filteredTransactions)
+    {
+        string sign = transaction.Type == TransactionType.Income ? "+" : "-";
+        Console.WriteLine(
+            $"{transaction.Id}. {transaction.Date:yyyy-MM-dd} | {transaction.Category} | {transaction.Description} | {sign}{transaction.Amount:C}");
+    }
 
     Pause();
 }
